@@ -7,6 +7,8 @@ import com.lcw.crm.settings.service.impl.UserServiceImpl;
 import com.lcw.crm.utils.MD5Util;
 import com.lcw.crm.utils.PrintJson;
 import com.lcw.crm.utils.ServiceFactory;
+import com.lcw.crm.utils.SqlSessionUtil;
+import org.apache.ibatis.session.SqlSession;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -28,6 +30,8 @@ public class UserController extends HttpServlet {
     }
 
     private void login(HttpServletRequest request,HttpServletResponse response) {
+        SqlSession sqlSession = SqlSessionUtil.getSqlSession();
+        System.out.println(sqlSession);
 //        获取请求参数
         String loginAct = request.getParameter("loginAct");
         String loginPwd = request.getParameter("loginPwd");
