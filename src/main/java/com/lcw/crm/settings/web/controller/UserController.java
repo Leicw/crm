@@ -7,7 +7,6 @@ import com.lcw.crm.settings.service.impl.UserServiceImpl;
 import com.lcw.crm.utils.MD5Util;
 import com.lcw.crm.utils.PrintJson;
 import com.lcw.crm.utils.ServiceFactory;
-import javafx.fxml.LoadException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
