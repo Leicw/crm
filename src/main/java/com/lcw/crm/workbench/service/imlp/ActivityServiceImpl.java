@@ -155,4 +155,11 @@ public class ActivityServiceImpl implements ActivityService {
             throw new UpdateException("更新市场活动备注失败");
         }
     }
+
+    @Override
+    public List<Activity> getActivityListByClueId(String id) {
+
+        List<Activity> list = activityDao.getActivityListByClueId(id);
+        return list;
+    }
 }

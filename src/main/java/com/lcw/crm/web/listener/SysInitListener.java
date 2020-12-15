@@ -28,7 +28,7 @@ public class SysInitListener implements ServletContextListener{
 //        将数据字典放在全局作用域对象
         Set<Map.Entry<String,List<DicValue>>> set = map.entrySet();
         for (Map.Entry<String,List<DicValue>> entry :set){
-            application.setAttribute(entry.getKey(),entry.getValue());
+            application.setAttribute(entry.getKey() + "List",entry.getValue());
         }
 
     }

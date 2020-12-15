@@ -30,4 +30,6 @@ public interface ActivityService {
     void saveRemark(ActivityRemark activityRemark) throws SaveException;
 
     void updateRemark(ActivityRemark ar) throws UpdateException;
+
+    List<Activity> getActivityListByClueId(String id);
 }
