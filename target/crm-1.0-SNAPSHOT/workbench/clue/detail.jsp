@@ -49,17 +49,93 @@
             $(".myHref").mouseout(function(){
                 $(this).children("span").css("color","#E6E6E6");
             });
+
+            //    页面加载完毕获取市场活动相关的备注
+            showActivityList();
+
+
+            //   对模态的查询绑定回车
+
+            $("#queryText").keydown(function (event) {
+                //如果是回车键
+                if(event.keyCode==13){
+                    $.ajax({
+                        url:"workbench/clue/getActivityByNameExcludeBund.do",
+                        datatype:"json",
+                        data:{
+                            "name":$.trim($("#queryText").val()),
+                            "clueId":"${clue.id}"
+                        },
+                        success:function (data) {
+                            var html = "";
+
+                            $.each(data,function (i,e) {
+                                html += '<tr>';
+                                html += '<td><input type="checkbox" name="check" value="'+ e.id +'"/></td>';
+                                html += '<td>' + e.name + '</td>';
+                                html += '<td>' + e.startDate + '</td>';
+                                html += '<td>' + e.endDate + '</td>';
+                                html += '<td>' + e.owner + '</td>';
+                                html += '</tr>';
+
+                            });
+
+                            $("#activityModalBody").html(html);
+                        }
+                    })
+                }
+            });
+
+        //    为关联按钮添加发起请求
+            $("#bundBtn").click(function () {
+
+                //获取已经选择的市场活动
+                var $checked = $("input[name=check]:checked");
+                if ($checked.length == 0){
+                    alert("请选择需要关联的市场活动");
+                    return false;
+                }
+
+                //拼接请求的参数
+                var param = "clueId=${clue.id}&";
+
+                $.each($checked,function (i,e) {
+
+                   param += ("activityId=" + $(e).val());
+                   if(i < $checked.length-1){
+                       param += "&";
+                   }
+
+                });
+                $.ajax({
+                    url:"workbench/clue/bund.do",
+                    datatype:"json",
+                    type:"post",
+                    data:param,
+                    success:function (data) {
+                        if (data.success){
+
+                        //    关联成功刷新列表，并关闭模态
+                            $("#bundModal").modal("hide");
+                            showActivityList();
+
+                        }else{
+                            alert("关联失败 ：" + data.msg);
+                        }
+                    }
+                })
+
+            })
+
+
         });
 
     </script>
 
     <script type="text/javascript">
-        $(function () {
-            //    页面加载完毕获取市场活动相关的备注
-            showActivityList();
-        });
 
-        //    获取市场活动相关的备注的回调
+
+        //    获取当前线索所相关联的市场活动回调
         function showActivityList(){
             $.ajax({
                 url:"workbench/clue/getActivityListByClueId.do",
@@ -124,7 +200,9 @@
                 <div class="btn-group" style="position: relative; top: 18%; left: 8px;">
                     <form class="form-inline" role="form">
                         <div class="form-group has-feedback">
-                            <input type="text" class="form-control" style="width: 300px;" placeholder="请输入市场活动名称，支持模糊查询">
+                            <input type="text" class="form-control" id="queryText" style="width: 300px;" placeholder="123请输入市场活动名称，支持模糊查询" />
+<%--                            防止模态自动提交的隐藏文本框--%>
+                            <input type='text' style='display:none'/>
                             <span class="glyphicon glyphicon-search form-control-feedback"></span>
                         </div>
                     </form>
@@ -132,7 +210,7 @@
                 <table id="activityTable" class="table table-hover" style="width: 900px; position: relative;top: 10px;">
                     <thead>
                     <tr style="color: #B3B3B3;">
-                        <td><input type="checkbox"/></td>
+                        <td><input type="checkbox" id="checkAll"/></td>
                         <td>名称</td>
                         <td>开始日期</td>
                         <td>结束日期</td>
@@ -140,8 +218,8 @@
                         <td></td>
                     </tr>
                     </thead>
-                    <tbody>
-                    <tr>
+                    <tbody id="activityModalBody">
+                    <%--<tr>
                         <td><input type="checkbox"/></td>
                         <td>发传单</td>
                         <td>2020-10-10</td>
@@ -154,13 +232,13 @@
                         <td>2020-10-10</td>
                         <td>2020-10-20</td>
                         <td>zhangsan</td>
-                    </tr>
+                    </tr>--%>
                     </tbody>
                 </table>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal">关联</button>
+                <button type="button" class="btn btn-primary" id="bundBtn">关联</button>
             </div>
         </div>
     </div>
@@ -333,7 +411,7 @@
         <h3>李四先生 </h3>
     </div>
     <div style="position: relative; height: 50px; width: 500px;  top: -72px; left: 700px;">
-        <button type="button" class="btn btn-default" onclick="window.location.href='workbench/clue/convert.html';"><span class="glyphicon glyphicon-retweet"></span> 转换</button>
+        <button type="button" class="btn btn-default" onclick="window.location.href='workbench/clue/convert.jsp?fullname=${clue.fullname}&id=${clue.id}&company=${clue.company}&appellation=${clue.appellation}&owner=${clue.owner}';"><span class="glyphicon glyphicon-retweet"></span> 转换</button>
         <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editClueModal"><span class="glyphicon glyphicon-edit"></span> 编辑</button>
         <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
     </div>

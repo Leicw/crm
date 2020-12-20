@@ -4,8 +4,61 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.lcw.crm.workbench.dao.CustomerDao">
-	
-  	
+	<select id="selectByName" resultType="com.lcw.crm.workbench.domain.Customer">
+        select
+            id,
+            owner,
+            name,
+            website,
+            phone,
+            createBy,
+            createTime,
+            editBy,
+            editTime,
+            contactSummary,
+            nextContactTime,
+            description,
+            address
+        from
+            tbl_customer
+        where
+            name=#{company}
+
+    </select>
+
+    <insert id="save" >
+        insert into
+            tbl_customer(
+                 id,
+                 owner,
+                 name,
+                 website,
+                 phone,
+                 createBy,
+                 createTime,
+                 contactSummary,
+                 nextContactTime,
+                 description,
+                 address)
+        values (
+               #{id},
+               #{owner},
+               #{name},
+               #{website},
+               #{phone},
+               #{createBy},
+               #{createTime},
+               #{contactSummary},
+               #{nextContactTime},
+               #{description},
+               #{address}
+               )
+
+    </insert>
+
+    <select id="getCustomerName" resultType="String">
+        select name from tbl_customer where name like '%' #{name} '%'
+    </select>
 </mapper>
 
 

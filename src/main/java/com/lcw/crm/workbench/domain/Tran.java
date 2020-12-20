@@ -1,5 +1,9 @@
 package com.lcw.crm.workbench.domain;
 
+import com.lcw.crm.vo.PaginationVO;
+
+import java.util.Map;
+
 public class Tran {
 	
 	private String id;
@@ -20,7 +24,17 @@ public class Tran {
 	private String description;
 	private String contactSummary;	//联系纪要
 	private String nextContactTime;	//下次联系时间
-	
+
+	private String possibility;
+
+	public String getPossibility() {
+		return possibility;
+	}
+
+	public void setPossibility(String possibility) {
+		this.possibility = possibility;
+	}
+
 	public String getId() {
 		return id;
 	}
@@ -129,8 +143,7 @@ public class Tran {
 	public void setNextContactTime(String nextContactTime) {
 		this.nextContactTime = nextContactTime;
 	}
-	
-	
 
-	
+
+
 }

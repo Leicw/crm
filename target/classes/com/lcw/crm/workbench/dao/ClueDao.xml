@@ -73,7 +73,7 @@
 
         from
         tbl_clue c
-        join
+        left join
         tbl_user u
         on
         c.owner=u.id
@@ -138,6 +138,17 @@
 
     <delete id="breakBund">
         delete from tbl_clue_activity_relation where id=#{id};
+    </delete>
+
+    <select id="selectById" resultType="com.lcw.crm.workbench.domain.Clue">
+        select
+           owner,id,fullname,appellation,company,job,email,phone,website,mphone,state,source,createBy,createTime,editBy,editTime,description,contactSummary,nextContactTime,address
+        from tbl_clue
+        where id=#{clueId}
+    </select>
+
+    <delete id="deleteById">
+        delete from tbl_clue where id=#{clueId}
     </delete>
 </mapper>
 

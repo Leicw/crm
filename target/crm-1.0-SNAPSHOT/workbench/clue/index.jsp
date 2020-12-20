@@ -143,6 +143,8 @@
                             //添加成功清空模态里的数据,并关闭模态
                             $("#create-form")[0].reset();
                             $("#createClueModal").modal("hide");
+                        //    刷新用户列表,我回到第一页，展示条数为之前设定
+                            pageList(1,$("#cluePage").bs_pagination('getOption', 'rowsPerPage'));
 
                         }else{
                             alert("添加失败，原因：" + data.msg)
@@ -270,6 +272,7 @@
                         <label for="create-appellation" class="col-sm-2 control-label">称呼</label>
                         <div class="col-sm-10" style="width: 300px;">
                             <select class="form-control" id="create-appellation">
+                                <option></option>
                                 <c:forEach items="${appellationList}" var="a">
                                     <option value="${a.value}">${a.text}</option>
                                 </c:forEach>
@@ -317,6 +320,7 @@
                         <label for="create-status" class="col-sm-2 control-label">线索状态</label>
                         <div class="col-sm-10" style="width: 300px;">
                             <select class="form-control" id="create-state">
+                                <option></option>
                                 <c:forEach items="${clueStateList}" var="c">
                                     <option value="${c.value}">${c.text}</option>
                                 </c:forEach>
@@ -336,6 +340,7 @@
                         <label for="create-source" class="col-sm-2 control-label">线索来源</label>
                         <div class="col-sm-10" style="width: 300px;">
                             <select class="form-control" id="create-source">
+                                <option></option>
                                 <c:forEach items="${sourceList}" var="s">
                                 <option value="${s.value}">${s.text}</option>
                                 </c:forEach>
@@ -603,6 +608,7 @@
                     <div class="input-group">
                         <div class="input-group-addon" >线索来源</div>
                         <select class="form-control" id="query-source">
+                            <option></option>
                             <c:forEach items="${sourceList}" var="so">
                                 <option value="${so.value}">${so.text}</option>
                             </c:forEach>
@@ -647,6 +653,7 @@
                     <div class="input-group">
                         <div class="input-group-addon" >线索状态</div>
                         <select class="form-control"id="query-state">
+                            <option></option>
                             <c:forEach items="${clueStateList}" var="cs">
                                 <option value="${cs.value}">${cs.text}</option>
                             </c:forEach>

@@ -7,6 +7,7 @@ import com.lcw.crm.vo.PaginationVO;
 import com.lcw.crm.workbench.domain.Activity;
 import com.lcw.crm.workbench.domain.ActivityRemark;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,4 +33,8 @@ public interface ActivityService {
     void updateRemark(ActivityRemark ar) throws UpdateException;
 
     List<Activity> getActivityListByClueId(String id);
+
+    List<Activity> getActivityByNameExcludeBund(HashMap<String, String> map);
+
+    List<Activity> getActivityByName(String name);
 }

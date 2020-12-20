@@ -15,4 +15,8 @@ public interface ClueDao {
     Clue detail(String id);
 
     int breakBund(String id);
+
+    Clue selectById(String clueId);
+
+    int deleteById(String clueId);
 }

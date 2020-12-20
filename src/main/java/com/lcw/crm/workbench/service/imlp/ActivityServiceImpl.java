@@ -162,4 +162,16 @@ public class ActivityServiceImpl implements ActivityService {
         List<Activity> list = activityDao.getActivityListByClueId(id);
         return list;
     }
+
+    @Override
+    public List<Activity> getActivityByNameExcludeBund(HashMap<String, String> map) {
+        List<Activity> list = activityDao.getActivityByNameExcludeBund(map);
+        return list;
+    }
+
+    @Override
+    public List<Activity> getActivityByName(String name) {
+        List<Activity> list = activityDao.getActivityByName(name);
+        return list;
+    }
 }

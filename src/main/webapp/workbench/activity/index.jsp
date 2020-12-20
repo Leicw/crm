@@ -252,65 +252,63 @@
 
 
         //查询市场活动的回调函数
-        function pageList(pageNo,pageSize) {
-            //将全选按钮取消
-            $("#checkAll").prop("checked",false);
+            function pageList(pageNo,pageSize) {
+                //将全选按钮取消
+                $("#checkAll").prop("checked",false);
 
-            //将隐藏域的数据保存到搜索框，防止只填了数据未点击查询就根据数据查信息，使得每次点击分页控件用的还是之前搜索框里的数据
-            $("#query-name").val($.trim($("#hidden-name").val()));
-            $("#query-owner").val($.trim($("#hidden-owner").val()));
-            $("#query-startDate").val($.trim($("#hidden-startDate").val()));
-            $("#query-endDate").val($.trim($("#hidden-endDate").val()));
+                //将隐藏域的数据保存到搜索框，防止只填了数据未点击查询就根据数据查信息，使得每次点击分页控件用的还是之前搜索框里的数据
+                $("#query-name").val($.trim($("#hidden-name").val()));
+                $("#query-owner").val($.trim($("#hidden-owner").val()));
+                $("#query-startDate").val($.trim($("#hidden-startDate").val()));
+                $("#query-endDate").val($.trim($("#hidden-endDate").val()));
 
-            $.ajax({
-                url:"workbench/activity/pageList.do",
-                datatype:"get",
-                data: {
-                    "pageNo":pageNo,
-                    "pageSize":pageSize,
-                    "name":$.trim($("#query-name").val()),
-                    "owner":$.trim($("#query-owner").val()),
-                    "startDate":$.trim($("#query-startDate").val()),
-                    "endDate":$.trim($("#query-endDate").val())
-                },
-                success:function (data) {
-                    //拼接表单内容
-                    var html = "";
-                    $.each(data.dataList,function (i,e) {
-                        html += '<tr class="active">';
-                        html += '<td><input type="checkbox" name="check" value="'+ e.id +'"/></td>';
-                        html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/activity/detail.do?id=' +e.id + '\';">' + e.name + '</a></td>';
-                        html += '<td>' + e.owner + '</td>';
-                        html += '<td>' + e.startDate + '</td>';
-                        html += '<td>' + e.endDate + '</td>';
-                        html += '</tr>';
-                    });
+                $.ajax({
+                    url:"workbench/activity/pageList.do",
+                    datatype:"get",
+                    data: {
+                        "pageNo":pageNo,
+                        "pageSize":pageSize,
+                        "name":$.trim($("#query-name").val()),
+                        "owner":$.trim($("#query-owner").val()),
+                        "startDate":$.trim($("#query-startDate").val()),
+                        "endDate":$.trim($("#query-endDate").val())
+                    },
+                    success:function (data) {
+                        //拼接表单内容
+                        var html = "";
+                        $.each(data.dataList,function (i,e) {
+                            html += '<tr class="active">';
+                            html += '<td><input type="checkbox" name="check" value="'+ e.id +'"/></td>';
+                            html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/activity/detail.do?id=' +e.id + '\';">' + e.name + '</a></td>';
+                            html += '<td>' + e.owner + '</td>';
+                            html += '<td>' + e.startDate + '</td>';
+                            html += '<td>' + e.endDate + '</td>';
+                            html += '</tr>';
+                        });
 
-                    $("#activityTableBody").html(html);
-                //    总条数的显示
-                    $("#activityPage").bs_pagination({
-                        currentPage: pageNo, // 页码
-                        rowsPerPage: pageSize, // 每页显示的记录条数
-                        maxRowsPerPage: 20, // 每页最多显示的记录条数
-                        totalPages: data.totalPages, // 总页数
-                        totalRows: data.total, // 总记录条数
+                        $("#activityTableBody").html(html);
+                        //    总条数的显示
+                        $("#activityPage").bs_pagination({
+                            currentPage: pageNo, // 页码
+                            rowsPerPage: pageSize, // 每页显示的记录条数
+                            maxRowsPerPage: 20, // 每页最多显示的记录条数
+                            totalPages: data.totalPages, // 总页数
+                            totalRows: data.total, // 总记录条数
 
-                        visiblePageLinks: 3, // 显示几个卡片
+                            visiblePageLinks: 3, // 显示几个卡片
 
-                        showGoToPage: true,
-                        showRowsPerPage: true,
-                        showRowsInfo: true,
-                        showRowsDefaultInfo: true,
-                        //点击分页组件时调用这个回调函数
-                        onChangePage : function(event, data){
-                            pageList(data.currentPage , data.rowsPerPage);
-                        }
-                    });
-                }
-            });
-
-
-        }
+                            showGoToPage: true,
+                            showRowsPerPage: true,
+                            showRowsInfo: true,
+                            showRowsDefaultInfo: true,
+                            //点击分页组件时调用这个回调函数
+                            onChangePage : function(event, data){
+                                pageList(data.currentPage , data.rowsPerPage);
+                            }
+                        });
+                    }
+                });
+            }
     </script>
     <title></title>
 </head>

@@ -27,7 +27,7 @@
             a.id
         from
              tbl_activity a
-        join
+        left join
             tbl_user u
         on
             a.owner=u.id
@@ -114,5 +114,35 @@
             ca.clueId=#{id}
     </select>
 
+    <select id="getActivityByNameExcludeBund" resultType="com.lcw.crm.workbench.domain.Activity">
+        select
+            u.name as owner,
+            a.name,
+            a.startDate,
+            a.endDate,
+            a.id
+        from tbl_activity a
+        join tbl_user u
+        on u.id=a.owner
+        where
+            a.name like '%' #{name} '%'
+        and
+            a.id not in(
+                select activityId from tbl_clue_activity_relation where clueId=#{clueId}
+                )
+    </select>
 
+    <select id="getActivityByName" resultType="com.lcw.crm.workbench.domain.Activity">
+        select
+            u.name as owner,
+            a.name,
+            a.startDate,
+            a.endDate,
+            a.id
+        from tbl_activity a
+        join tbl_user u
+        on u.id=a.owner
+        where
+            a.name like '%' #{name} '%'
+    </select>
 </mapper>

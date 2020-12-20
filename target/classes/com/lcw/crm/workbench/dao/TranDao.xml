@@ -4,8 +4,130 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.lcw.crm.workbench.dao.TranDao">
-	
-  	
+	<insert id="save">
+        insert into tbl_tran(
+            id,
+            owner,
+            money,
+            name,
+            expectedDate,
+            customerId,
+            stage,
+            source,
+            activityId,
+            contactsId,
+            createBy,
+            createTime,
+            description,
+            contactSummary,
+            nextContactTime,
+            type
+        )values (
+           #{id},
+           #{owner},
+           #{money},
+           #{name},
+           #{expectedDate},
+           #{customerId},
+           #{stage},
+           #{source},
+           #{activityId},
+           #{contactsId},
+           #{createBy},
+           #{createTime},
+           #{description},
+           #{contactSummary},
+           #{nextContactTime},
+           #{type}
+        )
+    </insert>
+
+    <select id="getActivityListByCondition" resultType="com.lcw.crm.workbench.domain.Tran">
+        select
+            t.id,
+            u.name as owner,
+            t.money,
+            t.name,
+            t.expectedDate,
+            cu.name as customerId,
+            t.stage,
+            t.type,
+            t.source,
+            a.name as activityId,
+            co.fullname as contactsId,
+            t.createBy,
+            t.createTime,
+            t.editBy,
+            t.editTime,
+            t.description,
+            t.contactSummary,
+            t.nextContactTime
+        from tbl_tran t
+        join tbl_user u
+        on t.owner=u.id
+        left join tbl_contacts co
+        on t.contactsId=co.id
+        join tbl_customer cu
+        on t.customerId=cu.id
+        left join tbl_activity a
+        on t.activityId=a.id
+        <where>
+            <if test="name != null and name != ''">
+                t.name like '%' #{name} '%'
+            </if>
+            <if test="owner != null and owner != ''">
+                u.name like '%' #{owner} '%'
+            </if>
+            <if test="customerId != null and customerId != ''">
+                cu.name like '%' #{customerId} '%'
+            </if>
+            <if test="stage != null and stage != ''">
+                t.stage=#{stage}
+            </if>
+            <if test="type != null and type != ''">
+                t.type=#{type}
+            </if>
+            <if test="source != null and source != ''">
+                t.source=#{source}
+            </if>
+            <if test="contactsId != null and contactsId != ''">
+                co.fullname like '%' #{contactsId} '%'
+            </if>
+        </where>
+        order by t.createTime desc
+    </select>
+
+    <select id="selectById" resultType="com.lcw.crm.workbench.domain.Tran">
+        select
+            t.id,
+            u.name as owner,
+            t.money,
+            t.name,
+            t.expectedDate,
+            cu.name as customerId,
+            t.stage,
+            t.type,
+            t.source,
+            a.name as activityId,
+            co.fullname as contactsId,
+            t.createBy,
+            t.createTime,
+            t.editBy,
+            t.editTime,
+            t.description,
+            t.contactSummary,
+            t.nextContactTime
+        from tbl_tran t
+        join tbl_user u
+            on t.owner=u.id
+        left join tbl_contacts co
+            on t.contactsId=co.id
+        join tbl_customer cu
+            on t.customerId=cu.id
+        left join tbl_activity a
+            on t.activityId=a.id
+        where t.id=#{id}
+    </select>
 </mapper>
 
 
