@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lcw.crm.exception.SaveException;
+import com.lcw.crm.exception.UpdateException;
 import com.lcw.crm.utils.DateTimeUtil;
 import com.lcw.crm.utils.SqlSessionUtil;
 import com.lcw.crm.utils.UUIDUtil;
@@ -15,7 +16,9 @@ import com.lcw.crm.workbench.domain.Customer;
 import com.lcw.crm.workbench.domain.Tran;
 import com.lcw.crm.workbench.domain.TranHistory;
 import com.lcw.crm.workbench.service.TranService;
+import org.omg.PortableServer.LIFESPAN_POLICY_ID;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -97,6 +100,42 @@ public class TranServiceImpl implements TranService {
     public List<TranHistory> showHistoryList(String tranId) {
         List<TranHistory> list = tranHistoryDao.getListByTranId(tranId);
         return list;
+    }
+
+    @Override
+    public void changeStage(Tran tran) throws UpdateException, SaveException {
+//        修改交易表的信息
+        int res1 = tranDao.changeStage(tran);
+        if (res1 != 1){
+            throw new UpdateException("更新交易数据失败");
+        }
+//创建一个交易历史
+        TranHistory tranHistory = new TranHistory();
+        tranHistory.setStage(tran.getStage());
+        tranHistory.setCreateBy(tran.getEditBy());
+        tranHistory.setCreateTime(tran.getEditTime());
+        tranHistory.setId(UUIDUtil.getUUID());
+        tranHistory.setMoney(tran.getMoney());
+        tranHistory.setExpectedDate(tran.getExpectedDate());
+        tranHistory.setTranId(tran.getId());
+
+        int res2 = tranHistoryDao.save(tranHistory);
+        if (res2 != 1){
+            throw new SaveException("添加交易历史失败");
+        }
+    }
+
+    @Override
+    public Map<String,Object> getCharts() {
+        int total = tranDao.getTotal();
+
+        List<Map<String,String>> list = tranDao.getCountGroupStage();
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("total",total);
+        map.put("dataList",list);
+
+        return map;
     }
 
 

@@ -53,7 +53,58 @@ public class TransactionController extends HttpServlet {
             detail(request,response);
         }else if ("/workbench/transaction/showHistoryList.do".equals(path)){
             showHistoryList(request,response);
+        }else if ("/workbench/transaction/changeStage.do".equals(path)){
+            changeStage(request,response);
+        }else if ("/workbench/transaction/getCharts.do".equals(path)){
+            getCharts(request,response);
         }
+    }
+
+    private void getCharts(HttpServletRequest request, HttpServletResponse response) {
+//        调用服务层
+        TranService ts = (TranService) ServiceFactory.getService(new TranServiceImpl());
+
+        Map<String,Object> map = ts.getCharts();
+
+        PrintJson.printJsonObj(response,map);
+    }
+
+    private void changeStage(HttpServletRequest request, HttpServletResponse response) {
+//       获取请求参数
+        String id = request.getParameter("id");
+        String stage = request.getParameter("stage");
+        String money = request.getParameter("money");
+        String expectedDate = request.getParameter("expectedDate");
+        String editBy = ((User)request.getSession().getAttribute("user")).getName();
+        String editTime = DateTimeUtil.getSysTime();
+//        获取可能性
+        Map<String,String> pMap = (Map<String, String>) request.getServletContext().getAttribute("pMap");
+        String possibility = pMap.get(stage);
+//        封装参数
+        Tran tran = new Tran();
+        tran.setExpectedDate(expectedDate);
+        tran.setId(id);
+        tran.setStage(stage);
+        tran.setMoney(money);
+        tran.setEditBy(editBy);
+        tran.setEditTime(editTime);
+        tran.setPossibility(possibility);
+//        调用服务层
+        Map<String,Object> map = new HashMap<>();
+        boolean success = true;
+        TranService ts = (TranService) ServiceFactory.getService(new TranServiceImpl());
+        try{
+            ts.changeStage(tran);
+            map.put("tran",tran);
+        }catch (Exception e){
+            success = false;
+            map.put("msg",e.getMessage());
+        }
+        map.put("success",success);
+
+//        输出结果
+        PrintJson.printJsonObj(response,map);
+
     }
 
     private void showHistoryList(HttpServletRequest request, HttpServletResponse response) {

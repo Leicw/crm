@@ -8,7 +8,21 @@
 <head>
     <% String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() +  request.getContextPath() ;%>
     <base href=<%=basePath%>/>
+<%
+    /*获取可能性集合，以及阶段的集合*/
+    Map<String,String> pMap = (Map<String, String>) application.getAttribute("pMap");
+//        获取阶段的集合
+    List<DicValue> stageList = (List<DicValue>) application.getAttribute("stageList");
 
+    //        获取丢失的分界
+    int lostIndex = 0;
+    for (int i = 0;i < stageList.size();i++){
+        if ("0".equals(pMap.get(stageList.get(i).getValue()))){
+            lostIndex = i;
+            break;
+        }
+    }
+%>
     <meta charset="UTF-8">
 
     <link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
@@ -94,6 +108,7 @@
 
         //    获取交易的历史
             showHistoryList();
+
         });
 
         function showHistoryList(){
@@ -118,7 +133,117 @@
                     $("#tranHistoryBody").html(html);
                 }
             });
-        };
+        }
+
+    //    改变历史交易的回调
+        function changeStage(stage,index){
+            if (confirm("是否改变交易阶段至"+stage)){
+                $.ajax({
+                    url:"workbench/transaction/changeStage.do",
+                    datatype:"json",
+                    type:"post",
+                    data:{
+                        "id":"${tran.id}",
+                        "stage":stage,
+                        "money":"${tran.money}",
+                        "expectedDate":"${tran.expectedDate}"
+                    },
+                    success:function (data) {
+                        if (data.success){
+                        //    改变当前页面的阶段，可能性，修改人，修改时间
+                            $("#stage").text(data.tran.stage);
+                            $("#possibility").text(data.tran.possibility);
+                            $("#editBy").text(data.tran.editBy);
+                            $("#editTime").text(data.tran.editTime);
+                        //    刷新历史交易
+                            showHistoryList();
+                        //更改图标
+                            changeIcon(stage,index);
+                        }else {
+                            alert(data.msg);
+                        }
+
+                    }
+                })
+            }
+        }
+        function changeIcon(stage,index) {
+            var lostIndex = <%=lostIndex%>;
+            var possibility = $("#possibility").text();
+            var length = <%=stageList.size()%>;
+
+        //    判断当前阶段是否为丢失阶段
+            if ("0" == possibility){
+                for (var i = 0;i<length;i++){
+                    if (i < lostIndex){
+                    //    黑圈
+                    //    移除样式
+                        $("#"+i).removeClass();
+                        //添加样式
+                        $("#"+i).addClass("glyphicon glyphicon-record mystage");
+                        //改变颜色
+                        $("#"+i).css("color","#000000");
+
+                    }else if (index == i){
+                    //    红叉
+                        //    移除样式
+                        $("#"+i).removeClass();
+                        //添加样式
+                        $("#"+i).addClass("glyphicon glyphicon-remove mystage");
+                        //改变颜色
+                        $("#"+i).css("color","#FF0000");
+                    }else {
+                    //    黑叉
+                        //    移除样式
+                        $("#"+i).removeClass();
+                        //添加样式
+                        $("#"+i).addClass("glyphicon glyphicon-remove mystage");
+                        //改变颜色
+                        $("#"+i).css("color","#000000");
+                    }
+                }
+
+            }else {
+                for (var i =0;i<length;i++){
+                    if (i<lostIndex){
+                        if (i == index){
+                        //    绿标
+                            //    移除样式
+                            $("#"+i).removeClass();
+                            //添加样式
+                            $("#"+i).addClass("glyphicon glyphicon-map-marker mystage");
+                            //改变颜色
+                            $("#"+i).css("color","#90F790");
+
+                        }else if (i < index){
+                        //    绿圈
+                            //    移除样式
+                            $("#"+i).removeClass();
+                            //添加样式
+                            $("#"+i).addClass("glyphicon glyphicon-ok-circle mystage");
+                            //改变颜色
+                            $("#"+i).css("color","#90F790");
+                        }else {
+                        //    黑圈
+                            //    移除样式
+                            $("#"+i).removeClass();
+                            //添加样式
+                            $("#"+i).addClass("glyphicon glyphicon-record mystage");
+                            //改变颜色
+                            $("#"+i).css("color","#000000");
+                        }
+                    }else {
+                    //    黑叉
+                        //    移除样式
+                        $("#"+i).removeClass();
+                        //添加样式
+                        $("#"+i).addClass("glyphicon glyphicon-remove mystage");
+                        //改变颜色
+                        $("#"+i).css("color","#000000");
+                    }
+                }
+            }
+        }
 
     </script>
 
@@ -144,19 +269,8 @@
 <!-- 阶段状态 -->
 <div style="position: relative; left: 40px; top: -50px;">
     阶段&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <%        /*获取可能性集合，以及阶段的集合*/
-        Map<String,String> pMap = (Map<String, String>) application.getAttribute("pMap");
-//        获取阶段的集合
-        List<DicValue> stageList = (List<DicValue>) application.getAttribute("stageList");
+    <%
 
-        //        获取丢失的分界
-        int lostIndex = 0;
-        for (int i = 0;i < stageList.size();i++){
-            if ("0".equals(pMap.get(stageList.get(i).getValue()))){
-                lostIndex = i;
-                break;
-            }
-        }
 //        判断当前阶段是否为丢失阶段
         String currentStage = ((Tran)request.getAttribute("tran")).getStage();
         String currentPossibility = pMap.get(currentStage);
@@ -298,7 +412,7 @@
         <div style="width: 300px; color: gray;">客户名称</div>
         <div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>${tran.customerId}</b></div>
         <div style="width: 300px;position: relative; left: 450px; top: -40px; color: gray;">阶段</div>
-        <div style="width: 300px;position: relative; left: 650px; top: -60px;"><b>${tran.stage}</b></div>
+        <div style="width: 300px;position: relative; left: 650px; top: -60px;"><b id="stage">${tran.stage}</b></div>
         <div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px;"></div>
         <div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px; left: 450px;"></div>
     </div>
@@ -306,7 +420,7 @@
         <div style="width: 300px; color: gray;">类型</div>
         <div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>${tran.type}</b></div>
         <div style="width: 300px;position: relative; left: 450px; top: -40px; color: gray;">可能性</div>
-        <div style="width: 300px;position: relative; left: 650px; top: -60px;"><b>${tran.possibility}</b></div>
+        <div style="width: 300px;position: relative; left: 650px; top: -60px;"><b id="possibility">${tran.possibility}</b></div>
         <div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px;"></div>
         <div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px; left: 450px;"></div>
     </div>
@@ -330,7 +444,7 @@
     </div>
     <div style="position: relative; left: 40px; height: 30px; top: 70px;">
         <div style="width: 300px; color: gray;">修改者</div>
-        <div style="width: 500px;position: relative; left: 200px; top: -20px;"><b>${tran.editBy}&nbsp;&nbsp;</b><small style="font-size: 10px; color: gray;">${tran.editTime}</small></div>
+        <div style="width: 500px;position: relative; left: 200px; top: -20px;"><b id="editBy">${tran.editBy}&nbsp;&nbsp;</b><small style="font-size: 10px; color: gray;" id="editTime">${tran.editTime}</small></div>
         <div style="height: 1px; width: 550px; background: #D5D5D5; position: relative; top: -20px;"></div>
     </div>
     <div style="position: relative; left: 40px; height: 30px; top: 80px;">

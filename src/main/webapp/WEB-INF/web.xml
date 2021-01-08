@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
     <display-name>crm</display-name>
-<!--    安全过滤器-->
+<!--    安全登陆过滤器-->
     <filter>
         <filter-name>LoginFilter</filter-name>
         <filter-class>com.lcw.crm.web.filter.LoginFilter</filter-class>
@@ -103,6 +103,8 @@
         <url-pattern>/workbench/transaction/save.do</url-pattern>
         <url-pattern>/workbench/transaction/detail.do</url-pattern>
         <url-pattern>/workbench/transaction/showHistoryList.do</url-pattern>
+        <url-pattern>/workbench/transaction/changeStage.do</url-pattern>
+        <url-pattern>/workbench/transaction/getCharts.do</url-pattern>
     </servlet-mapping>
 
 <!--欢迎界面-->

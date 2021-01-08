@@ -12,4 +12,10 @@ public interface TranDao {
     List<Tran> getActivityListByCondition(Map<String, String> map);
 
     Tran selectById(String id);
+
+    int changeStage(Tran tran);
+
+    List<Map<String, String>> getCountGroupStage();
+
+    int getTotal();
 }

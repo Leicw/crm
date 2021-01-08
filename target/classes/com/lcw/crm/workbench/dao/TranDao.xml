@@ -128,6 +128,18 @@
             on t.activityId=a.id
         where t.id=#{id}
     </select>
+
+    <update id="changeStage">
+        update tbl_tran set stage=#{stage},editBy=#{editBy},editTime=#{editTime} where id=#{id}
+    </update>
+
+    <select id="getCountGroupStage" resultType="map">
+        select count(*) as value,stage as name from tbl_tran group by stage
+    </select>
+
+    <select id="getTotal" resultType="int">
+        select count(*) from tbl_tran
+    </select>
 </mapper>
 
 

@@ -86,6 +86,14 @@
                 }
             });
 
+        //    按钮全选
+            $("#checkAll").click(function (){
+                $("input[name=check]").prop("checked",this.checked);
+            })
+            $("#activityModalBody").on("click",$("input[name=check]"),function (){
+                $("#checkAll").prop("checked",$("input[name=check]").length == $("input[name=check]:checked").length);
+            })
+
         //    为关联按钮添加发起请求
             $("#bundBtn").click(function () {
 
@@ -119,6 +127,9 @@
                             $("#bundModal").modal("hide");
                             showActivityList();
 
+                        //    清空数据，取消全选按钮
+                            $("#activityModalBody").html("");
+                            $("#checkAll").prop("checked",false);
                         }else{
                             alert("关联失败 ：" + data.msg);
                         }
